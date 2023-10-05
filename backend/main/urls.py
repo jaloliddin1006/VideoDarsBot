@@ -10,7 +10,7 @@ router.register(r'feedback', views.FeedbackViewset)
 urlpatterns = [
     path('', include(router.urls)),
     path('category/', views.BotGetCategoryListView.as_view()),
-    path('category/<int:pk>/', views.BotGetCategoryListView.as_view()),
+    path('category/<str:category>/', views.BotGetCategoryListView.as_view()),
     path('source/', views.BotGetSourceListView.as_view()),
-    path('source/<int:pk>/', views.BotGetSourceListView.as_view()), 
+    path('source/<str:category>/', views.BotGetSourceListView.as_view()), 
 ]

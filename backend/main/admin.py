@@ -19,7 +19,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
 @admin.register(models.BotUsers)
 class BotUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "first_name", "last_name", "username", "created_at")
+    list_display = ("id", "first_name", "last_name", "username", "created_at", "is_active")
     search_fields = ("first_name", "last_name", "username")
     list_filter = ("created_at",)
 
