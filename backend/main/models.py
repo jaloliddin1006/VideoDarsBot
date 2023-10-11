@@ -30,7 +30,7 @@ class Feedback(BaseModel):
     user = models.ForeignKey(BotUsers, on_delete=models.CASCADE, null=True, blank=True)
     feedback = models.TextField()
     def __str__(self):
-        return f'{self.id} | {self.user.first_name}'
+        return f'{self.id} | {self.feedback}'
     
     class Meta:
         verbose_name_plural = "Feedbacks"
