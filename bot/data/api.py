@@ -21,8 +21,8 @@ def get_all_users():
     return data
 ######### feedback ###########
 def feedback(user_id, feedback):
-    response = requests.post(f"{BASE_URL}/api/feedback/", data = {"user":user_id, "feedback": feedback})
-    return response.text
+    response = requests.post(f"{BASE_URL}/api/feedback/", data = {"user.user_id":user_id, "feedback": feedback})
+    return response.status_code
 
 ######### getcategorylist ##########
 def category_info(category=None):
