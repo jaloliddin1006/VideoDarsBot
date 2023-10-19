@@ -3,16 +3,20 @@ from rest_framework import generics, filters
 from .models import Category, CourseSource, BotUsers, Feedback
 from .serializers import BotGetCategoryListSerializer, BotGetSourceListSerializer, BotUserSerializer, BotFeedbackSerializer
 from rest_framework.viewsets import ModelViewSet
-
+from django.core.paginator import Paginator
 # Create your views here.
+from rest_framework.pagination import PageNumberPagination
 
-
+class PageResultsSetPagination(PageNumberPagination):
+    page_size = 8
+    page_size_query_param = 'page_size'
+    max_page_size = 10
 
 class BotGetCategoryListView(generics.ListAPIView):
-    pagination_class = None
     queryset = Category.objects.all()
     serializer_class = BotGetCategoryListSerializer
     filter_backends = [filters.SearchFilter]
+    pagination_class = PageResultsSetPagination
     search_fields = ['name']
     def get_queryset(self):
         if self.kwargs:
