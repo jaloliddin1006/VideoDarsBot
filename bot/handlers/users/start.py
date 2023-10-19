@@ -6,7 +6,6 @@ from aiogram.dispatcher import FSMContext
 from keyboards.default.defoult_btn import get_book_category_btn, menu_btn
 import requests
 
-
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message):
     user = message.from_user
@@ -37,40 +36,64 @@ async def input_password(message: types.Message, state: FSMContext):
     
 @dp.message_handler(text = "📚 Online darslar")
 async def bot_start(message: types.Message, state=FSMContext):
-    books_category = category_info()
-    if books_category:
-        await message.answer("Bo'limni tanlang", reply_markup=get_book_category_btn(books_category))
+    books_category = category_info(page="page=1")
+    if books_category['results']:
+        await message.answer("Bo'limni tanlang", reply_markup=get_book_category_btn(books_category, page="page=1"))
         await state.set_state("category")
     else:
         await message.answer("Bo'lim mavjud emas")
     
     
-@dp.message_handler(text = "🔙 Ortga", state="category") 
+@dp.message_handler(text = "🔙 Menu", state="category") 
 async def bot_start(message: types.Message, state=FSMContext):
     await message.answer("Bo'limni tanlang", reply_markup=menu_btn)
     await state.finish()
 
-
+@dp.message_handler(state="category", text_startswith=["⏮ previous :", "⏭ next :"])
+async def input_password(message: types.Message, state: FSMContext):
+    page = message.text.split(":")[1].strip()
+    print("goood", page)
     
+    books_category = category_info(page=page)
+    if books_category['results']:
+        await message.answer(f"Bo'limni tanlang: {message.text.split(':')[1].strip()}", reply_markup=get_book_category_btn(books_category, page=page))
+        await state.set_state("category")
+    else:
+        await message.answer("Bo'lim mavjud emas")
+        
 @dp.message_handler(state="category")
 async def input_password(message: types.Message, state: FSMContext):
     category = message.text
-    books_category = category_info(category)
-    if books_category:
-        await state.update_data({
-            "category":category})
-        await message.answer("Bo'limni tanlang.....", reply_markup=get_book_category_btn(books_category))
+    page = "page=1"
+    books_category = category_info(category, page=page)
+    if books_category['results']:
+        await state.update_data({"category":category})
+        await message.answer("Bo'limni tanlang.....", reply_markup=get_book_category_btn(books_category, page=page))
         await state.set_state("book_subcategory")
     else:
         await message.answer("Bo'lim mavjud emas")
     
 
-@dp.message_handler(text = "🔙 Ortga", state="book_subcategory")
+@dp.message_handler(text = "🔙 Menu", state="book_subcategory")
 async def asgdsg(message: types.Message, state=FSMContext):
-    books_category = category_info()
-    await message.answer("Bo'limni tanlang", reply_markup=get_book_category_btn(books_category))
+    books_category = category_info(page="page=1")
+    await message.answer("Bo'limni tanlang", reply_markup=get_book_category_btn(books_category, page="page=1"))
     await state.set_state("category")
 
+@dp.message_handler(state="book_subcategory", text_startswith=["⏮ previous :", "⏭ next :"])
+async def input_password(message: types.Message, state: FSMContext):
+    page = message.text.split(":")[1].strip()
+    print("goood", page)
+    
+    data = await state.get_data()
+    category = data['category']
+    books_category = category_info(category=category, page=page)
+    if books_category['results']:
+        await message.answer(f"Bo'limni tanlang: {message.text.split(':')[1].strip()}", reply_markup=get_book_category_btn(books_category, page=page))
+        await state.set_state("book_subcategory")
+    else:
+        await message.answer("Bo'lim mavjud emas")
+        
 @dp.message_handler(state="book_subcategory")
 async def subcategory_func(message: types.Message, state=FSMContext):
     data = await state.get_data()

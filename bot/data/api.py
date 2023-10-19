@@ -21,16 +21,16 @@ def get_all_users():
     return data
 ######### feedback ###########
 def feedback(user_id, feedback):
-    response = requests.post(f"{BASE_URL}/api/feedback/", data = {"user.user_id":user_id, "feedback": feedback})
+    response = requests.post(f"{BASE_URL}/api/feedback/", data = {"user__user_id":user_id, "feedback": feedback})
     return response.status_code
 
 ######### getcategorylist ##########
-def category_info(category=None):
+def category_info(category=None, page=None):
     try:
         if category:
-            response = requests.get(f"{BASE_URL}/api/category/{category}/")
+            response = requests.get(f"{BASE_URL}/api/category/{category}/?{page}")
         else:
-            response = requests.get(f"{BASE_URL}/api/category/")
+            response = requests.get(f"{BASE_URL}/api/category/?{page}")
         data = json.loads(response.text)
         return data
     except:
